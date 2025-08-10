@@ -1,6 +1,7 @@
 import pygame
 import os
 from damage_popup import DamagePopup
+from piece import Piece
 
 # Only run once, globally
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -23,36 +24,6 @@ pygame.display.set_caption("Custom Chess Engine")
 clock = pygame.time.Clock()
 damage_popups = []
 
-# === PIECE CLASS ===
-class Piece:
-    def __init__(self, name, color, hp=1):
-        self.name = name  # 'p', 'r', 'n', etc.
-        self.color = color  # 'w' or 'b'
-        self.hp = hp
-        self.max_hp = hp  # Store initial as max_hp
-        filename = f"{color}{name}".lower() + ".png"
-        path = os.path.join(BASE_DIR, "assets", filename)
-        self.image = pygame.transform.scale(pygame.image.load(path), (SQ_SIZE, SQ_SIZE))
-
-    def draw(self, row, col):
-        x = col * SQ_SIZE
-        y = row * SQ_SIZE
-        screen.blit(self.image, (x, y))
-
-        # Draw HP bar only if damaged
-        if self.hp < self.max_hp:
-            bar_width = SQ_SIZE * 0.8
-            bar_height = 6
-            bar_x = x + (SQ_SIZE - bar_width) / 2
-            bar_y = y + SQ_SIZE - bar_height - 2  # 2 px above bottom
-
-            # Background (red)
-            pygame.draw.rect(screen, (150, 0, 0), (bar_x, bar_y, bar_width, bar_height))
-
-            # Foreground (green) — proportional
-            hp_ratio = max(self.hp, 0) / self.max_hp
-            pygame.draw.rect(screen, (0, 200, 0), (bar_x, bar_y, bar_width * hp_ratio, bar_height))
-
 # === BOARD CLASS ===
 class Board:
     def __init__(self):
@@ -62,12 +33,12 @@ class Board:
     def setup(self):
         # Simplified setup for demo (add full setup if needed)
         for i in range(COLS):
-            self.grid[1][i] = Piece('p', 'b', hp=2)
-            self.grid[6][i] = Piece('p', 'w', hp=2)
-        self.grid[0][0] = Piece('r', 'b', hp=5)
-        self.grid[0][7] = Piece('r', 'b', hp=5)
-        self.grid[7][0] = Piece('r', 'w', hp=5)
-        self.grid[7][7] = Piece('r', 'w', hp=5)
+            self.grid[1][i] = Piece('p', 'b', BASE_DIR, SQ_SIZE, screen, hp=2)
+            self.grid[6][i] = Piece('p', 'w', BASE_DIR, SQ_SIZE, screen, hp=2)
+        self.grid[0][0] = Piece('r', 'b', BASE_DIR, SQ_SIZE, screen, hp=5)
+        self.grid[0][7] = Piece('r', 'b', BASE_DIR, SQ_SIZE, screen, hp=5)
+        self.grid[7][0] = Piece('r', 'w', BASE_DIR, SQ_SIZE, screen, hp=5)
+        self.grid[7][7] = Piece('r', 'w', BASE_DIR, SQ_SIZE, screen, hp=5)
 
     def draw(self):
         for r in range(ROWS):
